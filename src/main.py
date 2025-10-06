@@ -1,10 +1,56 @@
 from interface import InterfaceLevel
 from tree import TerminalTree, Node
 
-user_mode = Node(InterfaceLevel("user exec mode", ">:", "enable"))
-privileged_mode = Node(InterfaceLevel("privileged exec mode", "#:", "config_terminal"))
+user_mode_command_list = [
+    "ping",
+    "traceroute",
+    "show version",
+    "show running-config",
+    "show ip interface brief",
+    "show flash",
+    "show protocols",
+    "exit",
+    "logout",
+    "enable"  # pour passer en mode privilégié
+]
+
+
+privileged_mode_command_list = [
+    "configure terminal",  # passer en mode configuration globale
+    "copy running-config startup-config",
+    "show running-config",
+    "show startup-config",
+    "show interfaces",
+    "show ip route",
+    "reload",
+    "debug",
+    "undebug all",
+    "clear counters",
+    "write memory",
+    "disable"  # pour revenir en mode utilisateur
+]
+
+global_mode_command_list = [
+    "hostname",
+    "interface",
+    "line",
+    "router",
+    "ip route",
+    "access-list",
+    "banner motd",
+    "exit",
+    "end"
+]
+
+
+
+
+
+
+user_mode = Node(InterfaceLevel("user exec mode", ">:", user_mode_command_list))
+privileged_mode = Node(InterfaceLevel("privileged exec mode", "#:", privileged_mode_command_list))
 user_mode.provide_child(privileged_mode)
-global_mode = Node(InterfaceLevel("global config mode", "(config)#:", "fa0/0"))
+global_mode = Node(InterfaceLevel("global config mode", "(config)#:", global_mode_command_list))
 privileged_mode.provide_child(global_mode)
 
 config_interfaces_mode = [

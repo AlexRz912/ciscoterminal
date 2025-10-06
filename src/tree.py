@@ -16,8 +16,9 @@ class Node():
             return
         
         if self.__has_multiple_childs():
+            print(self.levelObject.name)
             for levelObject in self.nextLevelObjects:
-                print(levelObject.test_prompt(), levelObject.levelObject.name)
+                print(levelObject.levelObject.name)
             return
         
         print(self.levelObject.name)
