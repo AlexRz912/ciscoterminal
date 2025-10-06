@@ -1,15 +1,18 @@
 
 from textual.app import App
-
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Input, Static
 
 
-class ButtonsAndInputsApp(App):
-    CSS_PATH = "tcss"
-    def compose(self):
-        yield Static("(Config)#:")
 
-        
+class ButtonsAndInputsApp(App):
+    CSS_PATH = "test.tcss"
+    def compose(self):
+        with Horizontal():
+            yield Static("(Config)#:", id="line-interface")
+            yield Input(placeholder="type command here")
+
+     
 if __name__ == "__main__":
 
     app = ButtonsAndInputsApp()
