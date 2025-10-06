@@ -6,19 +6,22 @@ from textual.widgets import Button, Input, Static
 
 
 class ButtonsAndInputsApp(App):
-    CSS_PATH = "test.tcss"
+    CSS_PATH = "./front/test.tcss"
+
+    def __init__(self, prompt_text="fqlksfdjhqdsfl"):
+        super().__init__()
+        self.prompt_text = prompt_text
+    
     def compose(self):
         with Horizontal():
-            yield Static("(Config)#:", id="line-interface")
+            yield Static(self.prompt_text, id="line-interface")
             yield Input(placeholder="type command here")
 
-     
-if __name__ == "__main__":
-
-    app = ButtonsAndInputsApp()
+def __main__():
+    app = ButtonsAndInputsApp(">:")
     app.run()
 
-
+__main__()
 
 
 
