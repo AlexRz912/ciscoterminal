@@ -17,9 +17,8 @@ class Node():
             return
         
         if self.__has_multiple_childs():
-            #print(self.levelObject.name)
+            print(self.levelNode.name)
             for child in self.childLevelNodes:
-                print(child.levelNode.name)
                 child.test_prompt()
             return
         
