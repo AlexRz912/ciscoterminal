@@ -9,8 +9,8 @@ class InterfaceLevel():
             ):
         
 
-        self.name              = name
-        self.interface         = interface
-        self.commands          = commands
-        self.levelDownCommands = levelDownCommands
-        self.parentCommand     = parentCommand
+        self.name                   = name
+        self.interface              = interface
+        self.commands               = commands
+        self.levelDownCommands      = levelDownCommands
+        self.parentCommand          = parentCommand

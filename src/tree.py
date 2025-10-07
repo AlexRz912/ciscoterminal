@@ -18,18 +18,27 @@ class TerminalTree():
 
     def __handle_adjacents(self, command):
         if self.__selected_has_multiple_childs():
-            self.__select_child_on_matching_command(command)
+            print("tu passes par has_mult")
+            self.__select_on_matching_command(command)
 
-        if command == self.selected.levelDownCommands:
+        if command == self.selected.activeNode.levelDownCommands:
             self.selected = self.selected.childNodes
 
     def __selected_has_multiple_childs(self):
-        return isinstance(self.levelDownCommands, list)
+        return isinstance(self.selected.activeNode.levelDownCommands, list)
     
-    def __select_child_on_matching_command(self, command):
-        for index, levelDownCommand in enumerate(self.selected.levelDownCommands):
-            if command == levelDownCommand and levelDownCommand == self.selected.childNodes[index].parentCommand:
-                self.selected_mode = self.selected.childNodes[index]
+    def __select_on_matching_command(self, command):
+        print(self.selected.activeNode.levelDownCommands)
+        for index, levelDownCommand in enumerate(self.selected.activeNode.levelDownCommands):
+            print("tu passes par la boucle for")
+            print(index)
+            print(command)
+            print(levelDownCommand)
+            print(type(self.selected.childNodes))
+            print(self.selected.childNodes[index])
+            print()
+            if command == levelDownCommand and levelDownCommand == self.selected.childNodes[index].activeNode.parentCommand:
+                self.selected = self.selected.childNodes[index]
 
 
 class Node():

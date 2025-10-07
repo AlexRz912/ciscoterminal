@@ -44,17 +44,28 @@ global_mode_command_list = [
 
 
 user_mode = Node(InterfaceLevel("user exec mode", ">:", user_mode_command_list, "enable"))
-privileged_mode = Node(InterfaceLevel("privileged exec mode", "#:", privileged_mode_command_list), user_mode, "config terminal")
+privileged_mode = Node(InterfaceLevel("privileged exec mode", "#:", privileged_mode_command_list, "config terminal"), user_mode)
 user_mode.provide_child(privileged_mode)
-global_mode = Node(InterfaceLevel("global config mode", "(config)#:", global_mode_command_list), privileged_mode, ["interface, line, router"])
+global_mode = Node(InterfaceLevel("global config mode", "Router(config)#", global_mode_command_list, ["interface", "line", "router"]), privileged_mode)
 privileged_mode.provide_child(global_mode)
 
 config_interfaces_mode = [
-    Node(InterfaceLevel("interface", "##:", "blob"), global_mode, None, "interface"), 
-    Node(InterfaceLevel("router", "##:", "blob"), global_mode, None, "router"),
-    Node(InterfaceLevel("line", "###:", "blob"), global_mode, None, "line")
+    Node(InterfaceLevel("interface", "##:", "blob", None, "interface"), global_mode),
+    Node(InterfaceLevel("line", "###:", "blob", None, "line"), global_mode),
+    Node(InterfaceLevel("router", "##:", "blob", None, "router"), global_mode)
 ]
+
 global_mode.provide_child(config_interfaces_mode)
 
-interface_tree = TerminalTree(user_mode)
-interface_tree.prompt_tree()
+interface = TerminalTree(user_mode)
+interface.prompt_tree()
+
+def main_loop():
+    while True:
+        print(interface.selected.activeNode.interface)
+        command = input()
+        if command != "":
+            interface.select_node(command)
+    
+
+main_loop()
