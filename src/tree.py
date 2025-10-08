@@ -6,29 +6,42 @@ class TerminalTree():
     def prompt_tree(self):
         self.rootNode.prompt_all()
 
+    
+
+    def is_no_command(self, command):
+        for node_command in self.selected.activeNode.commands:
+            if command == node_command:
+                return False
+        return True
+    
+    def is_ambiguous(self, command):
+        return False
+    
     def select_node(self, command):
-        if self.__disable_privileged_mode(command):
-            return
-        if self.__back_to_privileged_mode(command):
-            return
         if self.__exit_current_level(command):
             return
-
+        
+        if self.__back_to_privileged_mode(command):
+            return
+        
+        if self.__disable_privileged_mode(command):
+            return
+        
         self.__select_mode(command)
-        
-    def __disable_privileged_mode(self, command):
-        if self.selected == self.rootNode.childNodes and command == "disable":
-            self.selected = self.rootNode
+
+    def __exit_current_level(self, command):
+        if command == "exit":
+            self.selected = self.selected.parentNode
             return True
-        
+           
     def __back_to_privileged_mode(self, command):
         if command == "end":
             self.selected = self.rootNode.childNodes
             return True
         
-    def __exit_current_level(self, command):
-        if command == "exit":
-            self.selected = self.selected.parentNode
+    def __disable_privileged_mode(self, command):
+        if self.selected == self.rootNode.childNodes and command == "disable":
+            self.selected = self.rootNode
             return True
         
     def __select_mode(self, command):
@@ -45,10 +58,9 @@ class TerminalTree():
         for index, levelDownCommand in enumerate(self.selected.activeNode.levelDownCommands):
             if command == levelDownCommand and levelDownCommand == self.selected.childNodes[index].activeNode.parentCommand:
                 self.selected = self.selected.childNodes[index]
+
     
     
-
-
 class Node():
     def __init__(self, activeNode, parentNode=None):
         self.activeNode = activeNode
