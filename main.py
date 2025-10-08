@@ -12,7 +12,8 @@ user_mode_command_list = [
     "show flash",
     "show protocols",
     "exit",
-    "logout"
+    "logout",
+    "enable"
 ]
 
 privileged_mode_command_list = [
@@ -84,6 +85,9 @@ config_interfaces_mode = [
 global_mode.provide_child(config_interfaces_mode)
 interface = TerminalTree(user_mode)
 
+def empty_log(log):
+    return log == ""
+        
 def handle_input():
     command = input(f"{interface.selected.activeNode.interface} ")
     subprocess.run("cls", shell=True)
@@ -93,15 +97,17 @@ def terminal():
     log = ""
     subprocess.run("cls", shell=True)
     while True:
+        if not empty_log(log):
+            print(log)
+
         user_input = handle_input()
-        #print(log)
-        #if interface.is_no_command(user_input):
-        #    log = f"% invalid input detected at '^' marker"
-        #    continue
+        if interface.is_no_command(user_input):
+            log = f"% invalid input detected at '^' marker"
+            continue
 #
-        #if interface.is_ambiguous(user_input):
-        #    log = f"% ambiguous command: {user_input}"
-        #    continue
+        if interface.is_ambiguous(user_input):
+            log = f"% ambiguous command: {user_input}"
+            continue
 
         if user_input != "":
             interface.select_node(user_input)
