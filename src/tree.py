@@ -7,18 +7,32 @@ class TerminalTree():
         self.rootNode.prompt_all()
 
     def select_node(self, command):
+        if self.__disable_privileged_mode(command):
+            return
+        if self.__back_to_privileged_mode(command):
+            return
+        if self.__exit_current_level(command):
+            return
+
+        self.__select_mode(command)
+        
+    def __disable_privileged_mode(self, command):
+        if self.selected == self.rootNode.childNodes and command == "disable":
+            self.selected = self.rootNode
+            return True
+        
+    def __back_to_privileged_mode(self, command):
         if command == "end":
             self.selected = self.rootNode.childNodes
-            return
+            return True
+        
+    def __exit_current_level(self, command):
         if command == "exit":
             self.selected = self.selected.parentNode
-            return
-
-        self.__handle_adjacents(command)
-
-    def __handle_adjacents(self, command):
+            return True
+        
+    def __select_mode(self, command):
         if self.__selected_has_multiple_childs():
-            print("tu passes par has_mult")
             self.__select_on_matching_command(command)
 
         if command == self.selected.activeNode.levelDownCommands:
@@ -28,17 +42,11 @@ class TerminalTree():
         return isinstance(self.selected.activeNode.levelDownCommands, list)
     
     def __select_on_matching_command(self, command):
-        print(self.selected.activeNode.levelDownCommands)
         for index, levelDownCommand in enumerate(self.selected.activeNode.levelDownCommands):
-            print("tu passes par la boucle for")
-            print(index)
-            print(command)
-            print(levelDownCommand)
-            print(type(self.selected.childNodes))
-            print(self.selected.childNodes[index])
-            print()
             if command == levelDownCommand and levelDownCommand == self.selected.childNodes[index].activeNode.parentCommand:
                 self.selected = self.selected.childNodes[index]
+    
+    
 
 
 class Node():

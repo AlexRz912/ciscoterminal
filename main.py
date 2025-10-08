@@ -1,39 +1,101 @@
+import subprocess
 
-from textual.app import App
-from textual.containers import Horizontal, Vertical
-from textual.widgets import Button, Input, Static
+from src.interface import InterfaceLevel
+from src.tree import TerminalTree, Node
 
+user_mode_command_list = [
+    "ping",
+    "traceroute", 
+    "show version",
+    "show running-config",
+    "show ip interface brief",
+    "show flash",
+    "show protocols",
+    "exit",
+    "logout"
+]
 
+privileged_mode_command_list = [
+    "configure terminal",
+    "copy running-config startup-config",
+    "show running-config",
+    "show startup-config", 
+    "show interfaces",
+    "show ip route",
+    "reload",
+    "debug",
+    "undebug all",
+    "clear counters",
+    "write memory",
+    "disable"
+]
 
-class ButtonsAndInputsApp(App):
-    CSS_PATH = "./front/test.tcss"
+global_mode_command_list = [
+    "hostname",
+    "interface",
+    "line",
+    "router",
+    "ip route",
+    "access-list",
+    "banner motd"
+]
 
-    def __init__(self, prompt_text="fqlksfdjhqdsfl"):
-        super().__init__()
-        self.prompt_text = prompt_text
-    
-    def compose(self):
-        with Horizontal():
-            yield Static(self.prompt_text, id="line-interface")
-            yield Input(placeholder="type command here")
+user_mode = Node(InterfaceLevel("user exec mode", ">:", user_mode_command_list, "enable"))
+privileged_mode = Node(InterfaceLevel("privileged exec mode", "#:", privileged_mode_command_list, "config terminal"), user_mode)
+user_mode.provide_child(privileged_mode)
+global_mode = Node(InterfaceLevel("global config mode", "Switch(config)#", global_mode_command_list, ["interface", "line", "router"]), privileged_mode)
+privileged_mode.provide_child(global_mode)
 
-def __main__():
-    app = ButtonsAndInputsApp(">:")
-    app.run()
+config_interfaces_mode = [
+    Node(
+        InterfaceLevel
+            (
+                "interface", 
+                "Interface(config)#:", 
+                "blob", 
+                None, 
+                "interface"
+            ), 
+        global_mode),
+    Node(
+        InterfaceLevel
+            (
+                "line", 
+                "Line(config)#", 
+                "blob", 
+                None, 
+                "line"
+            ), 
+            global_mode
+        ),
+    Node(
+        InterfaceLevel
+            (
+                "router", 
+                "Router(config)#", 
+                "blob", 
+                None, 
+                "router"
+            ), 
+            global_mode
+        )
+]
 
-__main__()
+global_mode.provide_child(config_interfaces_mode)
+interface = TerminalTree(user_mode)
 
+def handle_input():
+    command = input(f"{interface.selected.activeNode.interface} ")
+    subprocess.run("cls", shell=True)
+    return command
 
+def terminal():
+    subprocess.run("cls", shell=True)
+    while True:
+        user_input = handle_input()
+        
+        if user_input != "":
+            interface.select_node(user_input)
 
-# use compose for composing the backbone elements of the TUI
-        # Buttons
-        #yield Button("Click me!")
-        #yield Button("Primary!", variant="primary")
-        #yield Button.success("Success!")
-        #yield Button.warning("Warning!")
-        #yield Button.error("Error!")
+terminal()
 
-        # Inputs
-        #yield Input()
-        #yield Input(placeholder="Password", password=True)
-        #yield Input(placeholder="Type a number here",type="number",tooltip="Digits only please!",)

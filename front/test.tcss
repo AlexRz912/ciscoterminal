@@ -1,9 +1,0 @@
-#line-interface {
-    color: green;
-    width: auto;
-}
-
-Input {
-    width: 1fr;
-    border: none;
-}
