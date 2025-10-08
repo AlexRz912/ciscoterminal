@@ -101,14 +101,15 @@ def terminal():
             print(log)
 
         user_input = handle_input()
-        if interface.is_no_command(user_input):
-            log = f"% invalid input detected at '^' marker"
-            continue
-#
+
         if interface.is_ambiguous(user_input):
             log = f"% ambiguous command: {user_input}"
             continue
 
+        if interface.is_no_command(user_input):
+            log = f"% invalid input detected at '^' marker"
+            continue
+#
         if user_input != "":
             interface.select_node(user_input)
 

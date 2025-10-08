@@ -6,8 +6,6 @@ class TerminalTree():
     def prompt_tree(self):
         self.rootNode.prompt_all()
 
-    
-
     def is_no_command(self, command):
         for node_command in self.selected.activeNode.commands:
             if command == node_command:
@@ -15,6 +13,12 @@ class TerminalTree():
         return True
     
     def is_ambiguous(self, command):
+        count = 0
+        for node_command in self.selected.activeNode.commands:
+            if node_command.startswith(command):
+                count += 1 
+                if count == 2:
+                    return 2
         return False
     
     def select_node(self, command):
@@ -59,8 +63,6 @@ class TerminalTree():
             if command == levelDownCommand and levelDownCommand == self.selected.childNodes[index].activeNode.parentCommand:
                 self.selected = self.selected.childNodes[index]
 
-    
-    
 class Node():
     def __init__(self, activeNode, parentNode=None):
         self.activeNode = activeNode
